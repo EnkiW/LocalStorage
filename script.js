@@ -35,6 +35,7 @@ let productsData = {
         description: "Чоловічі кросівки від New Balance це повернення до однієї з класичних моделей бігових кросівок. Це повсякденне взуття поєднує у собі повсякденний стиль та сучасні технології. Кращий вибір для повсякденного носіння. "
     }]
 };
+
 function showProducts(category) {
     let products = productsData[category];
     let productList = document.getElementById("productList");
@@ -48,15 +49,18 @@ function showProducts(category) {
         productList.appendChild(listItem);
     });
 }
+
 function showProductInfo(product) {
     document.getElementById("productName").textContent = product.name;
     document.getElementById("productDescription").textContent = product.description;
     document.querySelector(".product-info button").style.display = "block";
 }
+
 function buyProduct() {
     document.querySelector(".product-info button").style.display = "none";
     document.querySelector(".order-form").style.display = "block";
 }
+
 function getRandomPrice() {
     return Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000;
 }
@@ -87,6 +91,7 @@ function showSavedOrderInfo(order) {
 
     document.querySelector(".order-details").style.display = "block";
 }
+
 function findProductByName(productName) {
     for (const category in productsData) {
         const products = productsData[category];
@@ -99,10 +104,10 @@ function findProductByName(productName) {
 }
 
 
-
 window.addEventListener("DOMContentLoaded", function () {
     updateSavedOrdersList();
 });
+
 function showMyOrders() {
     document.querySelector(".categories").style.display = "none";
     document.querySelector(".products").style.display = "none";
@@ -116,6 +121,7 @@ function showMyOrders() {
 window.addEventListener("DOMContentLoaded", function () {
     updateSavedOrdersList();
 });
+
 function submitOrder(event) {
     event.preventDefault();
     let fullName = document.getElementById("fullName").value;
@@ -164,4 +170,34 @@ function returnToList() {
     document.querySelector(".order-info").style.display = "none";
     document.querySelector(".order-details").style.display = "none";
     document.querySelector(".saved-orders").style.display = "block";
+}
+
+function deleteOrder(index) {
+    let orders = JSON.parse(localStorage.getItem("orders")) || [];
+    orders.splice(index, 1);
+    localStorage.setItem("orders", JSON.stringify(orders));
+    updateSavedOrdersList();
+}
+
+function updateSavedOrdersList() {
+    let orders = JSON.parse(localStorage.getItem("orders")) || [];
+    let orderList = document.getElementById("savedOrdersList");
+    orderList.innerHTML = "";
+    orders.forEach(function (order, index) {
+        let listItem = document.createElement("li");
+        listItem.textContent = `Замовлення №${index + 1}: ${order.productName} (${order.quantity} шт.) - ${order.date}, ${order.price} грн`;
+        listItem.onclick = function () {
+            showSavedOrderInfo(order);
+        };
+
+        let deleteButton = document.createElement("button");
+        deleteButton.textContent = "Видалити";
+        deleteButton.onclick = function (event) {
+            event.stopPropagation();
+            deleteOrder(index);
+        };
+        listItem.appendChild(deleteButton);
+
+        orderList.appendChild(listItem);
+    });
 }
