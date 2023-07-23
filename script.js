@@ -57,73 +57,8 @@ function buyProduct() {
     document.querySelector(".product-info button").style.display = "none";
     document.querySelector(".order-form").style.display = "block";
 }
-function submitOrder(event) {
-    event.preventDefault();
-    let fullName = document.getElementById("fullName").value;
-    let city = document.getElementById("city").value;
-    let shipping = document.getElementById("shipping").value;
-    let payment = document.getElementById("payment").value;
-    let quantity = document.getElementById("quantity").value;
-    let comment = document.getElementById("comment").value;
-
-    if (!fullName || !city || !shipping || !payment || !quantity) {
-        document.getElementById("error").textContent = "Будь ласка, заповніть обов'язкові поля.";
-        return;
-    }
-    document.getElementById("error").textContent = "";
-
-    document.getElementById("orderProductName").textContent = "Назва товару: " + document.getElementById("productName").textContent;
-    document.getElementById("orderProductDescription").textContent = "Опис товару: " + document.getElementById("productDescription").textContent;
-    document.getElementById("orderFullName").textContent = "ПІБ покупця: " + fullName;
-    document.getElementById("orderCity").textContent = "Місто: " + city;
-    document.getElementById("orderShipping").textContent = "Склад Нової пошти для надсилання: " + shipping;
-    document.getElementById("orderPayment").textContent = "Післяплата або оплата банківською карткою: " + payment;
-    document.getElementById("orderQuantity").textContent = "Кількість: " + quantity;
-    document.getElementById("orderComment").textContent = "Коментар: " + comment;
-
-    document.querySelector(".order-form").style.display = "none";
-    document.querySelector(".order-info").style.display = "block";
-}
-function submitOrder(event) {
-    event.preventDefault();
-    let fullName = document.getElementById("fullName").value;
-    let city = document.getElementById("city").value;
-    let shipping = document.getElementById("shipping").value;
-    let payment = document.getElementById("payment").value;
-    let quantity = document.getElementById("quantity").value;
-    let comment = document.getElementById("comment").value;
-
-    if (!fullName || !city || !shipping || !payment || !quantity) {
-        document.getElementById("error").textContent = "Будь ласка, заповніть обов'язкові поля.";
-        return;
-    }
-    document.getElementById("error").textContent = "";
-    const order = {
-        productName: document.getElementById("productName").textContent,
-        productDescription: document.getElementById("productDescription").textContent,
-        fullName,
-        city,
-        shipping,
-        payment,
-        quantity,
-        comment,
-    };
-
-    let orders = JSON.parse(localStorage.getItem("orders")) || [];
-    orders.push(order);
-    localStorage.setItem("orders", JSON.stringify(orders));
-
-    // Очистити поля форми після збереження замовлення
-    document.getElementById("fullName").value = "";
-    document.getElementById("city").value = "";
-    document.getElementById("shipping").value = "";
-    document.getElementById("payment").value = "";
-    document.getElementById("quantity").value = "";
-    document.getElementById("comment").value = "";
-
-    document.querySelector(".order-form").style.display = "none";
-    document.querySelector(".order-info").style.display = "block";
-    updateSavedOrdersList();
+function getRandomPrice() {
+    return Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000;
 }
 
 function updateSavedOrdersList() {
@@ -132,7 +67,7 @@ function updateSavedOrdersList() {
     orderList.innerHTML = "";
     orders.forEach(function (order, index) {
         let listItem = document.createElement("li");
-        listItem.textContent = `Замовлення №${index + 1}: ${order.productName} (${order.quantity} шт.)`;
+        listItem.textContent = `Замовлення №${index + 1}: ${order.productName} (${order.quantity} шт.) - ${order.date}, ${order.price} грн`;
         listItem.onclick = function () {
             showSavedOrderInfo(order);
         };
@@ -141,18 +76,29 @@ function updateSavedOrdersList() {
 }
 
 function showSavedOrderInfo(order) {
-    document.getElementById("orderProductName").textContent = "Назва товару: " + order.productName;
-    document.getElementById("orderProductDescription").textContent = "Опис товару: " + order.productDescription;
-    document.getElementById("orderFullName").textContent = "ПІБ покупця: " + order.fullName;
-    document.getElementById("orderCity").textContent = "Місто: " + order.city;
-    document.getElementById("orderShipping").textContent = "Склад Нової пошти для надсилання: " + order.shipping;
-    document.getElementById("orderPayment").textContent = "Післяплата або оплата банківською карткою: " + order.payment;
-    document.getElementById("orderQuantity").textContent = "Кількість: " + order.quantity;
-    document.getElementById("orderComment").textContent = "Коментар: " + order.comment;
+    document.getElementById("orderDate").textContent = "Дата замовлення: " + order.date;
+    document.getElementById("orderPrice").textContent = "Загальна ціна замовлення: " + order.price + " грн";
+    const product = findProductByName(order.productName);
+    if (product) {
+        document.getElementById("orderDetails").textContent = "Опис товару: " + product.description;
+    } else {
+        document.getElementById("orderDetails").textContent = "Опис товару недоступний.";
+    }
 
-    document.querySelector(".order-form").style.display = "none";
-    document.querySelector(".order-info").style.display = "block";
+    document.querySelector(".order-details").style.display = "block";
 }
+function findProductByName(productName) {
+    for (const category in productsData) {
+        const products = productsData[category];
+        const product = products.find((p) => p.name === productName);
+        if (product) {
+            return product;
+        }
+    }
+    return null;
+}
+
+
 
 window.addEventListener("DOMContentLoaded", function () {
     updateSavedOrdersList();
@@ -164,19 +110,6 @@ function showMyOrders() {
     document.querySelector(".order-form").style.display = "none";
     document.querySelector(".order-info").style.display = "none";
     document.querySelector(".saved-orders").style.display = "block";
-}
-
-window.addEventListener("DOMContentLoaded", function () {
-    updateSavedOrdersList();
-});
-function showMyOrders() {
-    document.querySelector(".categories").style.display = "none";
-    document.querySelector(".products").style.display = "none";
-    document.querySelector(".product-info").style.display = "none";
-    document.querySelector(".order-form").style.display = "none";
-    document.querySelector(".order-info").style.display = "none";
-    document.querySelector(".saved-orders").style.display = "block";
-
     updateSavedOrdersList();
 }
 
@@ -197,6 +130,7 @@ function submitOrder(event) {
         return;
     }
     document.getElementById("error").textContent = "";
+
     const order = {
         productName: document.getElementById("productName").textContent,
         productDescription: document.getElementById("productDescription").textContent,
@@ -206,6 +140,8 @@ function submitOrder(event) {
         payment,
         quantity,
         comment,
+        date: new Date().toLocaleDateString(),
+        price: getRandomPrice(),
     };
 
     let orders = JSON.parse(localStorage.getItem("orders")) || [];
@@ -222,8 +158,10 @@ function submitOrder(event) {
     showMyOrders();
 }
 
+
 function returnToList() {
     document.querySelector(".order-form").style.display = "none";
     document.querySelector(".order-info").style.display = "none";
+    document.querySelector(".order-details").style.display = "none";
     document.querySelector(".saved-orders").style.display = "block";
 }
