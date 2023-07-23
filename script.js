@@ -157,3 +157,16 @@ function showSavedOrderInfo(order) {
 window.addEventListener("DOMContentLoaded", function () {
     updateSavedOrdersList();
 });
+function showMyOrders() {
+    document.querySelector(".categories").style.display = "none";
+    document.querySelector(".products").style.display = "none";
+    document.querySelector(".product-info").style.display = "none";
+    document.querySelector(".order-form").style.display = "none";
+    document.querySelector(".order-info").style.display = "none";
+    document.querySelector(".saved-orders").style.display = "block";
+}
+
+// Завантажити збережені замовлення при завантаженні сторінки
+window.addEventListener("DOMContentLoaded", function () {
+    updateSavedOrdersList();
+});
