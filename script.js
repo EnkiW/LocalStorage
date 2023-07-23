@@ -166,7 +166,64 @@ function showMyOrders() {
     document.querySelector(".saved-orders").style.display = "block";
 }
 
-// Завантажити збережені замовлення при завантаженні сторінки
 window.addEventListener("DOMContentLoaded", function () {
     updateSavedOrdersList();
 });
+function showMyOrders() {
+    document.querySelector(".categories").style.display = "none";
+    document.querySelector(".products").style.display = "none";
+    document.querySelector(".product-info").style.display = "none";
+    document.querySelector(".order-form").style.display = "none";
+    document.querySelector(".order-info").style.display = "none";
+    document.querySelector(".saved-orders").style.display = "block";
+
+    updateSavedOrdersList();
+}
+
+window.addEventListener("DOMContentLoaded", function () {
+    updateSavedOrdersList();
+});
+function submitOrder(event) {
+    event.preventDefault();
+    let fullName = document.getElementById("fullName").value;
+    let city = document.getElementById("city").value;
+    let shipping = document.getElementById("shipping").value;
+    let payment = document.getElementById("payment").value;
+    let quantity = document.getElementById("quantity").value;
+    let comment = document.getElementById("comment").value;
+
+    if (!fullName || !city || !shipping || !payment || !quantity) {
+        document.getElementById("error").textContent = "Будь ласка, заповніть обов'язкові поля.";
+        return;
+    }
+    document.getElementById("error").textContent = "";
+    const order = {
+        productName: document.getElementById("productName").textContent,
+        productDescription: document.getElementById("productDescription").textContent,
+        fullName,
+        city,
+        shipping,
+        payment,
+        quantity,
+        comment,
+    };
+
+    let orders = JSON.parse(localStorage.getItem("orders")) || [];
+    orders.push(order);
+    localStorage.setItem("orders", JSON.stringify(orders));
+
+    document.getElementById("fullName").value = "";
+    document.getElementById("city").value = "";
+    document.getElementById("shipping").value = "";
+    document.getElementById("payment").value = "";
+    document.getElementById("quantity").value = "";
+    document.getElementById("comment").value = "";
+
+    showMyOrders();
+}
+
+function returnToList() {
+    document.querySelector(".order-form").style.display = "none";
+    document.querySelector(".order-info").style.display = "none";
+    document.querySelector(".saved-orders").style.display = "block";
+}

@@ -59,7 +59,8 @@
     <p id="error" style="color: red;"></p>
 </div>
 <div class="order-info" style="display: none;">
-    <h2>Інформація про замовлення</h2>
+    <!-- Видаліть текст "Інформація про замовлення" і замініть його на форму замовлення -->
+    <h2>Форма збереження замовлення</h2>
     <p id="orderProductName"></p>
     <p id="orderProductDescription"></p>
     <p id="orderFullName"></p>
@@ -68,8 +69,10 @@
     <p id="orderPayment"></p>
     <p id="orderQuantity"></p>
     <p id="orderComment"></p>
+    <!-- Додайте кнопку "Повернутися до списку" -->
+    <button onclick="returnToList()">Повернутися до списку</button>
 </div>
-<div class="saved-orders">
+<div class="saved-orders" style="display: none;">
     <h2>Список збережених замовлень</h2>
     <ul id="savedOrdersList"></ul>
 </div>
